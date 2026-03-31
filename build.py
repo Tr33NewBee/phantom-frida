@@ -47,7 +47,7 @@ from patches import (
 
 # --- Constants ---
 
-NDK_VERSION = "r29"
+NDK_VERSION = "r25"
 NDK_URL = f"https://dl.google.com/android/repository/android-ndk-{NDK_VERSION}-linux.zip"
 ALL_ARCHS = ["android-arm64", "android-arm", "android-x86_64", "android-x86"]
 
