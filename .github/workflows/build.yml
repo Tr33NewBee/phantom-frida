@@ -63,7 +63,7 @@ jobs:
         uses: actions/cache@v4
         id: ndk-cache
         with:
-          path: build/android-ndk-r29
+          path: build/android-ndk-r25
           key: ndk-r29-linux
 
       - name: Download NDK
