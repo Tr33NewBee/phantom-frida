@@ -5,3 +5,16 @@ debug/
 __pycache__/
 *.pyc
 .DS_Store
+.vscode/
+.idea/
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+*.zip
+*.tar.gz
+*.egg-info/
+dist/
+*.egg
+*.egg-info/
