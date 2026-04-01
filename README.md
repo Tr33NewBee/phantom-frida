@@ -164,6 +164,24 @@ Verified on arm64 Android 14 device with `--extended`:
 - [ajeossida](https://github.com/hackcatml/ajeossida) by hackcatml — original stealth Frida concept
 - Detection vector research from the Android security community
 
+# Dev
+```sh
+# 首次执行编译 == 注意这里的custom_name需要配合frida-sepolicy.sh脚本一起使用
+# 这个脚本内置了selinux policy的规则
+FRIDA_VERSION=17.7.2 CUSTOM_NAME=stealth ARCH=android-arm64 PORT=27142 bash build-frida.sh
+# 第二次编译
+ARCH=android-arm64 NDK_PATH=/workspaces/phantom-frida/build/android-ndk-r29 bash dev.sh
+```
+## manu-sepolicy
+手动处理sepolicy
+```sh
+# 正常执行
+adb shell su -c 'sh /data/local/tmp/frida-selinux-patch.sh stealth'
+
+# 强制重新 patch
+adb shell su -c 'sh /data/local/tmp/frida-selinux-patch.sh stealth -f'
+```
+
 ## License
 
 MIT
