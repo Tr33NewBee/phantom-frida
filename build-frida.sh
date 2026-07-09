@@ -19,6 +19,12 @@
 
 set -euo pipefail
 
+PULLED_LOCK="$(pwd)/pulled_lock"
+if [ -f "$PULLED_LOCK" ];then
+  echo "frida source code pulled"
+  exit 0
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FRIDA_VERSION="${FRIDA_VERSION:-17.7.2}"
 CUSTOM_NAME="${CUSTOM_NAME:-ajeossida}"
@@ -77,3 +83,5 @@ fi
 
 echo "Running: ${CMD[*]}"
 "${CMD[@]}"
+
+touch "$PULLED_LOCK"

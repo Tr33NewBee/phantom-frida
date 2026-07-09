@@ -1,0 +1,196 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 9fc5782..d83a8ab 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -221,7 +221,7 @@ jobs:
+       - name: Download universal frida-agent for iOS/arm64(e)
+         uses: actions/download-artifact@v8
+         with:
+-          name: frida-agent-ios-arm64e
++          name: tr33newbee-agent-ios-arm64e
+           path: ios-arm64e/
+       - name: Sign universal frida-agent for iOS/arm64(e)
+         run: codesign -f -s "-" ios-arm64e/frida-agent.dylib
+@@ -262,7 +262,7 @@ jobs:
+       - name: Download frida-agent for tvOS/arm64
+         uses: actions/download-artifact@v8
+         with:
+-          name: frida-agent-tvos-arm64
++          name: tr33newbee-agent-tvos-arm64
+           path: tvos-arm64/
+       - name: Prepare frida-agent for tvOS/arm64
+         run: codesign -f -s "-" tvos-arm64/frida-agent.dylib
+@@ -311,7 +311,7 @@ jobs:
+               macos-arm64e/frida-gadget.dylib \
+               -create -output frida-gadget-macos-universal.dylib
+           install_name_tool \
+-              -id @executable_path/../Frameworks/FridaGadget.dylib \
++              -id @executable_path/../Frameworks/Tr33newbeeGadget.dylib \
+               frida-gadget-macos-universal.dylib
+           codesign \
+               -f -s "$MACOS_CERTID" \
+@@ -332,7 +332,7 @@ jobs:
+         run: |
+           mv ios-arm64e/frida-gadget.dylib frida-gadget-ios-universal.dylib
+           install_name_tool \
+-              -id @executable_path/Frameworks/FridaGadget.dylib \
++              -id @executable_path/Frameworks/Tr33newbeeGadget.dylib \
+               frida-gadget-ios-universal.dylib
+           codesign \
+               -f -s "$IOS_CERTID" \
+@@ -368,7 +368,7 @@ jobs:
+               ios-arm64-simulator/frida-gadget.dylib \
+               -create -output frida-gadget-ios-simulator-universal.dylib
+           install_name_tool \
+-              -id @executable_path/Frameworks/FridaGadget.dylib \
++              -id @executable_path/Frameworks/Tr33newbeeGadget.dylib \
+               frida-gadget-ios-simulator-universal.dylib
+           codesign \
+               -f -s "$IOS_CERTID" \
+@@ -395,7 +395,7 @@ jobs:
+           for arch in arm64 arm64-simulator; do
+             cp watchos-$arch/frida-gadget.dylib frida-gadget-watchos-$arch.dylib
+             install_name_tool \
+-                -id @executable_path/Frameworks/FridaGadget.dylib \
++                -id @executable_path/Frameworks/Tr33newbeeGadget.dylib \
+                 frida-gadget-watchos-$arch.dylib
+             codesign \
+                 -f -s "$WATCHOS_CERTID" \
+@@ -427,7 +427,7 @@ jobs:
+           for arch in arm64 arm64-simulator; do
+             cp tvos-$arch/frida-gadget.dylib frida-gadget-tvos-$arch.dylib
+             install_name_tool \
+-                -id @executable_path/Frameworks/FridaGadget.dylib \
++                -id @executable_path/Frameworks/Tr33newbeeGadget.dylib \
+                 frida-gadget-tvos-$arch.dylib
+             codesign \
+                 -f -s "$TVOS_CERTID" \
+@@ -846,9 +846,9 @@ jobs:
+         with:
+           name: frida-core-emulation-windows
+           path: |
+-            build/subprojects/frida-core/src/frida-helper.exe
++            build/subprojects/frida-core/src/tr33newbee-helper.exe
+             build/subprojects/frida-core/lib/agent/frida-agent.dll
+-            build/subprojects/frida-core/compat/frida-helper.exe
++            build/subprojects/frida-core/compat/tr33newbee-helper.exe
+             build/subprojects/frida-core/compat/frida-agent.dll
+       - name: Upload Gum devkit
+         uses: actions/upload-artifact@v7
+@@ -998,9 +998,9 @@ jobs:
+           path: emulation/
+       - name: Configure
+         run: |
+-          $helperModern = (Resolve-Path "emulation/src/frida-helper.exe").Path
++          $helperModern = (Resolve-Path "emulation/src/tr33newbee-helper.exe").Path
+           $agentModern = (Resolve-Path "emulation/lib/agent/frida-agent.dll").Path
+-          $helperLegacy = (Resolve-Path "emulation/compat/frida-helper.exe").Path
++          $helperLegacy = (Resolve-Path "emulation/compat/tr33newbee-helper.exe").Path
+           $agentLegacy = (Resolve-Path "emulation/compat/frida-agent.dll").Path
+ 
+           .\configure `
+@@ -1506,17 +1506,17 @@ jobs:
+         with:
+           name: frida-inject-ios-${{ matrix.arch }}
+           path: ${{ env.FRIDA_PREFIX }}/usr/bin/frida-inject
+-      - name: Upload frida-helper
++      - name: Upload tr33newbee-helper
+         if: ${{ matrix.arch != 'arm64' && !endsWith(matrix.arch, '-simulator') }}
+         uses: actions/upload-artifact@v7
+         with:
+-          name: frida-helper-ios-${{ matrix.arch }}
+-          path: ${{ env.FRIDA_PREFIX }}/usr/lib/frida-1.0/frida-helper
++          name: tr33newbee-helper-ios-${{ matrix.arch }}
++          path: ${{ env.FRIDA_PREFIX }}/usr/lib/frida-1.0/tr33newbee-helper
+       - name: Upload frida-agent
+         if: ${{ matrix.arch != 'arm64' && !endsWith(matrix.arch, '-simulator') }}
+         uses: actions/upload-artifact@v7
+         with:
+-          name: frida-agent-ios-${{ matrix.arch }}
++          name: tr33newbee-agent-ios-${{ matrix.arch }}
+           path: ${{ env.FRIDA_PREFIX }}/usr/lib/frida-1.0/frida-agent.dylib
+       - name: Upload frida-gadget
+         if: matrix.arch != 'arm64'
+@@ -1651,17 +1651,17 @@ jobs:
+         with:
+           name: frida-inject-tvos-${{ matrix.arch }}
+           path: ${{ env.FRIDA_PREFIX }}/usr/bin/frida-inject
+-      - name: Upload frida-helper
++      - name: Upload tr33newbee-helper
+         if: ${{ !endsWith(matrix.arch, '-simulator') }}
+         uses: actions/upload-artifact@v7
+         with:
+-          name: frida-helper-tvos-${{ matrix.arch }}
+-          path: ${{ env.FRIDA_PREFIX }}/usr/lib/frida-1.0/frida-helper
++          name: tr33newbee-helper-tvos-${{ matrix.arch }}
++          path: ${{ env.FRIDA_PREFIX }}/usr/lib/frida-1.0/tr33newbee-helper
+       - name: Upload frida-agent
+         if: ${{ !endsWith(matrix.arch, '-simulator') }}
+         uses: actions/upload-artifact@v7
+         with:
+-          name: frida-agent-tvos-${{ matrix.arch }}
++          name: tr33newbee-agent-tvos-${{ matrix.arch }}
+           path: ${{ env.FRIDA_PREFIX }}/usr/lib/frida-1.0/frida-agent.dylib
+       - name: Upload frida-gadget
+         uses: actions/upload-artifact@v7
+diff --git a/CONTRIBUTING.md b/CONTRIBUTING.md
+index 05ab532..7f89867 100644
+--- a/CONTRIBUTING.md
++++ b/CONTRIBUTING.md
+@@ -662,8 +662,8 @@ Argument helper variable before return value.
+ guint
+ _frida_darwin_helper_backend_demonitor_and_clone_injectee_state (FridaDarwinHelperBackend * self, void * raw_instance)
+ {
+-  FridaInjectInstance * instance = raw_instance;
+-  FridaInjectInstance * clone;
++  Tr33newbeeInjectInstance * instance = raw_instance;
++  Tr33newbeeInjectInstance * clone;
+ 
+   ...
+ 
+diff --git a/meson.build b/meson.build
+index 01c76a6..93d0042 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1,4 +1,4 @@
+-project('frida', 'c',
++project('tr33newbee', 'c',
+   version: run_command('releng' / 'frida_version.py', check: true).stdout().strip(),
+   meson_version: '>=1.1.0',
+ )
+diff --git a/subprojects/frida-core b/subprojects/frida-core
+--- a/subprojects/frida-core
++++ b/subprojects/frida-core
+@@ -1 +1 @@
+-Subproject commit f31061e8462c787dea5af5e19b05db41bc75e92c
++Subproject commit f31061e8462c787dea5af5e19b05db41bc75e92c-dirty
+diff --git a/subprojects/frida-go b/subprojects/frida-go
+--- a/subprojects/frida-go
++++ b/subprojects/frida-go
+@@ -1 +1 @@
+-Subproject commit fd52f64f49fbbde2820e02e6e6dd3aafd1ac0ce6
++Subproject commit fd52f64f49fbbde2820e02e6e6dd3aafd1ac0ce6-dirty
+diff --git a/subprojects/frida-gum b/subprojects/frida-gum
+--- a/subprojects/frida-gum
++++ b/subprojects/frida-gum
+@@ -1 +1 @@
+-Subproject commit a2ebd7b8f570a0aa82ef6823ffa0f7d39703ffa4
++Subproject commit a2ebd7b8f570a0aa82ef6823ffa0f7d39703ffa4-dirty
+diff --git a/subprojects/frida-node b/subprojects/frida-node
+--- a/subprojects/frida-node
++++ b/subprojects/frida-node
+@@ -1 +1 @@
+-Subproject commit 22562a9dd65f9f1da50480c721e20d17663cf34a
++Subproject commit 22562a9dd65f9f1da50480c721e20d17663cf34a-dirty
+diff --git a/subprojects/frida-python b/subprojects/frida-python
+--- a/subprojects/frida-python
++++ b/subprojects/frida-python
+@@ -1 +1 @@
+-Subproject commit 69ce0e49101542d090871564f35386b4feeee41f
++Subproject commit 69ce0e49101542d090871564f35386b4feeee41f-dirty
+diff --git a/subprojects/frida-tools b/subprojects/frida-tools
+--- a/subprojects/frida-tools
++++ b/subprojects/frida-tools
+@@ -1 +1 @@
+-Subproject commit a2c21b07629e8ffab4b088940a37dbb75fcc6185
++Subproject commit a2c21b07629e8ffab4b088940a37dbb75fcc6185-dirty

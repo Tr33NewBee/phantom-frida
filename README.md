@@ -166,9 +166,11 @@ Verified on arm64 Android 14 device with `--extended`:
 
 # Dev
 ```sh
+# 获取frida最新版本
+gh release view -R frida/frida --json tagName,apiUrl
 # 首次执行编译 == 注意这里的custom_name需要配合frida-sepolicy.sh脚本一起使用
 # 这个脚本内置了selinux policy的规则
-FRIDA_VERSION=17.7.2 CUSTOM_NAME=stealth ARCH=android-arm64 PORT=27142 bash build-frida.sh
+FRIDA_VERSION=17.15.4 CUSTOM_NAME=tr33newbee ARCH=android-arm64 PORT=28257 bash build-frida.sh
 # 第二次编译
 ARCH=android-arm64 NDK_PATH=/workspaces/phantom-frida/build/android-ndk-r29 bash dev.sh
 ```
@@ -181,6 +183,35 @@ adb shell su -c 'sh /data/local/tmp/frida-selinux-patch.sh stealth'
 # 强制重新 patch
 adb shell su -c 'sh /data/local/tmp/frida-selinux-patch.sh stealth -f'
 ```
+
+
+## 新增patch文件
+本次增加了patch文件来制定版本进行patch,
+```
+# 推荐：自动应用所有patch
+bash apply-latest-patches.sh
+
+# 或手动应用综合patch
+cd build/frida && git apply < ../frida-latest.patch
+```
+
+## 编译成功后执行
+```
+/data/local/tmp/tr33newb22
+```
+在电脑端执行
+```
+adb forward tcp:27042 localabstract:/data/local/tmp/fs.sock
+```
+测试
+```
+frida-ps -R
+```
+后续使用可直接使用
+```
+frida -R -f com.xx.app -l inject.js
+```
+这样可以绕过大部分的端口检测,当前的frida版本是`17.15.1`
 
 ## License
 
