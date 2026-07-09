@@ -616,6 +616,23 @@ def find_dex_regions(data: bytes) -> list[tuple[int, int]]:
     return regions
 
 
+def patch_socket_path(frida_dir:Path,name:str = "tr33newbee"):
+    """ Patch socekt.vala and droidy/droidy-host-session.vala b/src/droidy/droidy-host-session.vala """
+    log(f"Applying socket path patch for {name}...", "STEP5")
+    socket_path = frida_dir / "subprojects" / "frida-core" / "lib" / "base" / "socket.vala"
+    replace_in_file(socket_path, "public const uint16 DEFAULT_CLUSTER_PORT = 27052;", f'public const uint16 DEFAULT_CLUSTER_PORT = 27052;\n\tpublic const string DEFAULT_CONTROL_UNIX_PATH = "/data/local/tmp/{name}.sock";')
+
+    replace_in_file(socket_path, 'return parse_socket_address (address, port, "127.0.0.1", DEFAULT_CONTROL_PORT);', f'return parse_socket_address (address, port, "unix:"+ DEFAULT_CONTROL_UNIX_PATH, DEFAULT_CONTROL_PORT);')
+    replace_in_file(socket_path, 'return parse_socket_address (address, port, "127.0.0.1", DEFAULT_CLUSTER_PORT);', f'return parse_socket_address (address, port, "unix:"+ DEFAULT_CONTROL_UNIX_PATH, DEFAULT_CLUSTER_PORT);')
+    ## 
+    host_session_path = frida_dir / "subprojects" / "frida-core" / "src" / "droidy" / "droidy-host-session.vala"
+
+    replace_in_file(host_session_path,'string control_endpoint = ("tcp:%" + uint16.FORMAT_MODIFIER + "u").printf (DEFAULT_CONTROL_PORT);','string control_endpoint = "localabstract:"+ DEFAULT_CONTROL_UNIX_PATH;')
+
+    build_compat_script = frida_dir / "subprojects" / "frida-core" / "compat" / "build.py"
+    replace_in_file(build_compat_script,'command.add_argument("glib_flavor", help="upstream or frida", choices=["upstream", "frida"])',f'command.add_argument("glib_flavor", help="upstream or frida", choices=["upstream", "frida","{name}"])')
+
+   
 def replace_bytes_outside_regions(data: bytes, old: bytes, new: bytes,
                                    skip_regions: list[tuple[int, int]]) -> tuple[bytes, int]:
     """Replace byte pattern in data, skipping protected regions.
@@ -917,6 +934,9 @@ Detection vectors covered:
             sys.exit(1)
         log(f"Using existing source at {frida_dir}", "OK")
 
+    # apply patches and build
+    # os.system("bash /workspaces/phantom-frida/apply-latest-patches.sh")
+    # print("--- Finished applying latest patches ---")
     # Step 3: Source patches
     apply_source_patches(frida_dir, custom_name)
     apply_targeted_patches(frida_dir, custom_name, frida_major)
@@ -931,6 +951,9 @@ Detection vectors covered:
     # Step 4: Stability fixes
     if args.temp_fixes:
         apply_stability_fixes(frida_dir, frida_major)
+
+    #Step5 : ix socket path
+    patch_socket_path(frida_dir, custom_name)
 
     if args.skip_build:
         log("=" * 60, "HEADER")

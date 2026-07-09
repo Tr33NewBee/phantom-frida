@@ -66,7 +66,7 @@ def get_source_patches(name: str, cap_name: str) -> list[tuple[str, str]]:
         ('"FridaAgent"', f'"{cap_name}Agent"'),
 
         # --- JS engine thread name (visible in /proc/pid/task/tid/status) ---
-        ('"gum-js-loop"', f'"{name}-js-loop"'),
+        ('"gum-js-loop"', f'"{name}-v8-js-loop"'),
 
         # --- [E] Extended: internal Frida path references ---
         ("'frida'", f"'{name}'"),  # Generic single-quoted 'frida'
@@ -221,20 +221,21 @@ LIBC_HOOK_PATCHES = {
     ],
 
     # gumexceptor-posix.c: disable signal/sigaction replacement
-    # Verified exact lines in 17.7.2:
+    # Verified exact lines in 17.15.4:
     #   gum_interceptor_replace (interceptor, gum_original_signal,
-    #       gum_exceptor_backend_replacement_signal, self, NULL);
+    #       gum_exceptor_backend_replacement_signal, NULL, &options);
     #   gum_interceptor_replace (interceptor, gum_original_sigaction,
-    #       gum_exceptor_backend_replacement_sigaction, self, NULL);
+    #       gum_exceptor_backend_replacement_sigaction, NULL, &options);
+
     "exceptor": [
         ("gum_interceptor_replace (interceptor, gum_original_signal,",
          "// gum_interceptor_replace (interceptor, gum_original_signal,"),
-        ("gum_exceptor_backend_replacement_signal, self, NULL);",
-         "// gum_exceptor_backend_replacement_signal, self, NULL);"),
+        ("gum_exceptor_backend_replacement_signal, NULL, &options);",
+         "// gum_exceptor_backend_replacement_signal, NULL, &options);"),
         ("gum_interceptor_replace (interceptor, gum_original_sigaction,",
          "// gum_interceptor_replace (interceptor, gum_original_sigaction,"),
-        ("gum_exceptor_backend_replacement_sigaction, self, NULL);",
-         "// gum_exceptor_backend_replacement_sigaction, self, NULL);"),
+        ("gum_exceptor_backend_replacement_sigaction, NULL, &options);",
+         "// gum_exceptor_backend_replacement_sigaction, NULL, &options);"),
     ],
 }
 
