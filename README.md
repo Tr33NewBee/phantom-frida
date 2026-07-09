@@ -184,24 +184,13 @@ adb shell su -c 'sh /data/local/tmp/frida-selinux-patch.sh stealth'
 adb shell su -c 'sh /data/local/tmp/frida-selinux-patch.sh stealth -f'
 ```
 
-
-## 新增patch文件
-本次增加了patch文件来制定版本进行patch,
-```
-# 推荐：自动应用所有patch
-bash apply-latest-patches.sh
-
-# 或手动应用综合patch
-cd build/frida && git apply < ../frida-latest.patch
-```
-
 ## 编译成功后执行
 ```
 /data/local/tmp/tr33newb22
 ```
 在电脑端执行
 ```
-adb forward tcp:27042 localabstract:/data/local/tmp/fs.sock
+adb forward tcp:27042 localabstract:/data/local/tmp/tr33newbee.sock
 ```
 测试
 ```
