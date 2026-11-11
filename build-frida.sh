@@ -26,7 +26,7 @@ if [ -f "$PULLED_LOCK" ];then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-FRIDA_VERSION="${FRIDA_VERSION:-17.7.2}"
+FRIDA_VERSION="${FRIDA_VERSION:-17.15.3}"
 CUSTOM_NAME="${CUSTOM_NAME:-ajeossida}"
 ARCH="${ARCH:-android-arm64}"
 PORT="${PORT:-}"
